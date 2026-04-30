@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ar" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>التسوق الإلكتروني - استخراج</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: #f3f4f6; 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2vh 2vw; 
+            font-family: 'Calibri', 'Segoe UI', Tahoma, Arial, sans-serif; 
+            direction: rtl;
+        }
+
+        #welcome-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(243, 244, 246, 0.95);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .welcome-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .input-group input {
+            padding: 10px;
+            font-size: 18px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .start-btn {
+            padding: 10px 40px;
+            font-size: 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 12px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            position: relative;
+            filter: blur(5px);
+            transition: filter 0.3s ease;
+            padding-bottom: 20px;
+        }
+
+        .header-section {
+            padding: 20px;
+            border-bottom: 2px solid #e5e7eb;
+            text-align: center;
+            position: relative;
+        }
+
+        .score-stamp {
+            display: none;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            color: #ef4444;
+            font-size: 20px;
+            font-weight: 900;
+            border: 4px dashed #ef4444;
+            padding: 10px;
+            transform: rotate(-10deg);
+            z-index: 10;
+        }
+
+        .title {
+            color: #1f2937;
+            font-size: 28px; 
+            font-weight: 900;
+            border-bottom: 4px solid #eab308;
+            margin-bottom: 10px;
+        }
+        
+        .instruction { 
+            font-size: 16px; 
+            color: #10b981; 
+            background: #d1fae5;
+            padding: 10px;
+            border-radius: 8px;
+            display: inline-block;
+            direction: ltr; /* لتعليمات الإنجليزية */
+        }
+
+        .text-area {
+            background-color: #fefce8; 
+            padding: 25px 30px; 
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .reading-text {
+            font-size: 24px; 
+            line-height: 2.2; 
+            color: #111827;
+            text-align: justify;
+            font-weight: bold; 
+        }
+
+        .word {
+            cursor: pointer; 
+            padding: 0 4px; 
+            border-radius: 4px; 
+            transition: 0.2s;
+            display: inline-block;
+        }
+        
+        .word:hover { background-color: rgba(59, 130, 246, 0.1); }
+
+        .word.active-word {
+            background-color: #fde047;
+            box-shadow: 0 0 0 2px #eab308;
+        }
+
+        .questions-area {
+            padding: 30px;
+        }
+
+        .q-row {
+            font-size: 19px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .slot {
+            display: inline-block;
+            min-width: 120px;
+            height: 35px;
+            border-bottom: 2px dashed #3b82f6;
+            background-color: #f9fafb;
+            cursor: pointer;
+            text-align: center;
+            color: #1d4ed8;
+            line-height: 35px;
+            padding: 0 10px;
+            font-size: 17px;
+        }
+
+        .slot.filled {
+            border-bottom: 2px solid #10b981;
+            background-color: #ecfdf5;
+        }
+
+        .correct-answer-display {
+            color: #ef4444;
+            font-size: 15px;
+            margin-right: 5px;
+            font-weight: normal;
+        }
+
+        .submit-btn {
+            padding: 12px 50px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 20px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+
+        @media (max-width: 768px) {
+            .reading-text { font-size: 20px; }
+            .q-row { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="welcome-screen">
+        <div class="welcome-box">
+            <h2>مرحباً بك في النشاط</h2>
+            <div class="input-group">
+                <input type="text" id="student-name" placeholder="اكتب اسمك هنا...">
+            </div>
+            <button class="start-btn" onclick="startQuiz()">ابدأ النشاط</button>
+        </div>
+    </div>
+
+    <div class="app-container" id="capture-area">
+        <header class="header-section">
+            <div class="score-stamp" id="score-stamp">
+                <div id="stamp-name"></div>
+                <div id="stamp-score" dir="ltr"></div>
+            </div>
+            <h2 class="title">التسوق الإلكتروني</h2>
+            <br>
+            <p class="instruction">Instructions: Click on the word in the text to select it, then click on the gap below to move it.</p>
+        </header>
+
+        <main class="text-area">
+            <div id="text-container" class="reading-text">
+                </div>
+        </main>
+
+        <section class="questions-area" id="questions-container">
+            <div class="q-row" data-category="0">
+                <span>• فِعْلٌ مُضَارِعٌ:</span>
+                <span class="slot"></span> <span class="slot"></span>
+            </div>
+            <div class="q-row" data-category="1">
+                <span>• فِعْلٌ مَاضٍ:</span>
+                <span class="slot"></span>
+            </div>
+            <div class="q-row" data-category="2">
+                <span>• فِعْلٌ فِي الْمُسْتَقْبَلِ:</span>
+                <span class="slot"></span>
+            </div>
+            <div class="q-row" data-category="3">
+                <span>• جَمْعُ مُؤَنَّثٍ سَالِمٌ:</span>
+                <span class="slot"></span> <span class="slot"></span>
+            </div>
+            <div class="q-row" data-category="4">
+                <span>• تَفْضِيلٌ:</span>
+                <span class="slot"></span> <span class="slot"></span> <span class="slot"></span>
+            </div>
+            <div class="q-row" data-category="5">
+                <span>• رَوَابِطُ:</span>
+                <span class="slot"></span> <span class="slot"></span>
+            </div>
+            <div class="q-row" data-category="6">
+                <span>• مُرَادِفُ (خِلَالَ):</span>
+                <span class="slot"></span>
+            </div>
+            <div class="q-row" data-category="7">
+                <span>• مُفْرَدُ (هَدَايَا):</span>
+                <span class="slot"></span>
+            </div>
+            <div class="q-row" data-category="8">
+                <span>• ضِدُّ (بَطِيءٌ):</span>
+                <span class="slot"></span>
+            </div>
+            <div class="q-row" data-category="9">
+                <span>• ضِدُّ (أَغْلَى):</span>
+                <span class="slot"></span>
+            </div>
+            <div class="q-row" data-category="10">
+                <span>• جَمْعُ (الْمَحَلُّ):</span>
+                <span class="slot"></span>
+            </div>
+        </section>
+
+        <button class="submit-btn" id="submit-btn" onclick="submitQuiz()">تسليم الإجابات</button>
+    </div>
+
+    <script>
+        let studentName = "";
+        
+        // النص المشكل وتحديد العبارات التي تعمل كوحدة واحدة
+        const rawText = `فِي الْوَاقِعِ نَحْنُ <span class="word">نَتَسَوَّقُ</span> <span class="word">عَبْرَ</span> الْإِنْتَرْنِتِ فِي الْوَقْتِ الْحَالِيِّ أَكْثَرَ مِنَ الْمَاضِي، <span class="word">وَالسَّبَبُ فِي ذَلِكَ</span> أَنَّ مُعْظَمَ النَّاسِ <span class="word">يُفَضِّلُونَ</span> التَّسَوُّقَ الْإِلِكْتْرُونِيَّ <span class="word">لِأَنَّهُ</span> <span class="word">أَمْتَعُ</span> وَ <span class="word">أَسْهَلُ</span> وَ <span class="word">أَرْخَصُ</span> مِنَ التَّسَوُّقِ الْمُبَاشِرِ مِنَ <span class="word">الْمَحِلَّاتِ</span> التِّجَارِيَّةِ، <span class="word">كَمَا أَنَّهُ</span> <span class="word">يُوَفِّرُ</span> الْوَقْتَ وَ الْجُهْدَ أَيْضاً. فِي الْأُسْبُوعِ الْمَاضِي <span class="word">اِشْتَرَيْتُ</span> حَقِيبَةَ يَدٍ <span class="word">هَدِيَّةً</span> لِأُمِّي فِي عِيدِ مِيلَادِهَا مِنْ مَوْقِعِ ترينديول وَ <span class="word">كَانَتْ</span> أَرْخَصَ مِنَ الْمَحَلِّ التِّجَارِيِّ بِمِائَتَيْ دِرْهَمٍ، <span class="word">كَمَا أَنَّ</span> جَوْدَتَهَا كَانَتْ عَالِيَةً، وَ كَانَ الشَّحْنُ وَ التَّوْصِيلُ <span class="word">سَرِيعاً</span>، <span class="word">لَكِنْ</span> لِلْأَسَفِ الدَّفْعُ كَانَ <span class="word">عَنْ طَرِيقِ</span> بِطَاقَةِ الِائْتِمَانِ. <span class="word">لِذَلِكَ</span>، الْمَرَّةَ الْقَادِمَةَ <span class="word">سَوْفَ أَتَسَوَّقُ</span> مِنْ مَوْقِعِ أَمَازُون حَيْثُ <span class="word">يُمْكِنُنِي</span> الدَّفْعُ عِنْدَ الِاسْتِلَامِ. وَ مِنْ خِلَالِ تَجْرِبَتِي، <span class="word">أَنْصَحُ</span> عِنْدَ التَّسَوُّقِ عَبْرَ الْإِنْتَرْنِتِ الشِّرَاءَ مِنْ مَوَاقِعَ مَشْهُورَةٍ وَ مَوْثُوقَةٍ حَتَّى لَا <span class="word">تَكُونَ</span> ضَحِيَّةَ <span class="word">عَمَلِيَّاتِ</span> تَحَايُلٍ وَ غِشٍّ أَوْ تَتَعَرَّضَ لِلْقَرْصَنَةِ.`;
+
+        // قاعدة البيانات للإجابات (بدون تشكيل للمطابقة المرنة)
+        const quizData = {
+            0: ['نتسوق', 'يفضلون', 'يوفر', 'يمكنني', 'انصح', 'تكون'], // مضارع
+            1: ['اشتريت', 'كانت'], // ماض
+            2: ['سوف اتسوق'], // مستقبل
+            3: ['المحلات', 'عمليات'], // مؤنث سالم
+            4: ['ارخص', 'امتع', 'اسهل'], // تفضيل
+            5: ['والسبب في ذلك', 'لذلك', 'لانه', 'كما انه', 'لكن', 'كما ان'], // روابط
+            6: ['عن طريق'], // مرادف خلال
+            7: ['هدية'], // مفرد هدايا
+            8: ['سريع'], // ضد بطيء
+            9: ['ارخص'], // ضد أغلى
+            10: ['المحلات'] // جمع المحل
+        };
+
+        function normalize(text) {
+            return text.replace(/[\u064B-\u065F]/g, "").replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").trim();
+        }
+
+        function startQuiz() {
+            studentName = document.getElementById('student-name').value.trim();
+            if (!studentName) return alert("الرجاء إدخال اسمك.");
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('capture-area').style.filter = 'none';
+        }
+
+        // بناء النص
+        document.getElementById('text-container').innerHTML = rawText;
+
+        let selectedWord = null;
+        let selectedElem = null;
+
+        document.querySelectorAll('.word').forEach(w => {
+            w.onclick = function() {
+                if(selectedElem) selectedElem.classList.remove('active-word');
+                selectedWord = this.innerText;
+                selectedElem = this;
+                this.classList.add('active-word');
+            }
+        });
+
+        document.querySelectorAll('.slot').forEach(s => {
+            s.onclick = function() {
+                if(selectedWord) {
+                    this.innerText = selectedWord;
+                    this.classList.add('filled');
+                    selectedElem.classList.remove('active-word');
+                    selectedWord = null; selectedElem = null;
+                } else if(this.innerText) {
+                    this.innerText = "";
+                    this.classList.remove('filled');
+                }
+            }
+        });
+
+        function submitQuiz() {
+            let totalScore = 0;
+            const rows = document.querySelectorAll('.q-row');
+
+            rows.forEach(row => {
+                const cat = row.getAttribute('data-category');
+                const slots = row.querySelectorAll('.slot');
+                const correctList = quizData[cat];
+                let rowHasCorrect = false;
+
+                slots.forEach(slot => {
+                    let val = normalize(slot.innerText);
+                    if (val && correctList.some(c => normalize(c) === val)) {
+                        rowHasCorrect = true;
+                        slot.style.color = "#047857"; // أخضر للإجابة الصحيحة
+                    } else {
+                        // إظهار الإجابة الصحيحة باللون الأحمر في حال الخطأ أو الفراغ
+                        const feedback = document.createElement('span');
+                        feedback.className = 'correct-answer-display';
+                        feedback.innerText = `(${correctList[0]})`;
+                        slot.appendChild(feedback);
+                        slot.style.color = "#ef4444";
+                    }
+                    slot.style.pointerEvents = 'none';
+                });
+
+                if (rowHasCorrect) totalScore++;
+            });
+
+            // الختم
+            const stamp = document.getElementById('score-stamp');
+            document.getElementById('stamp-name').innerText = studentName;
+            document.getElementById('stamp-score').innerText = `${totalScore} / ${rows.length}`;
+            stamp.style.display = 'block';
+            document.getElementById('submit-btn').style.display = 'none';
+
+            // تصوير الشاشة تلقائياً
+            setTimeout(() => {
+                html2canvas(document.getElementById('capture-area'), { scale: 2 }).then(canvas => {
+                    let link = document.createElement('a');
+                    link.download = `${studentName}_Result.png`;
+                    link.href = canvas.toDataURL();
+                    link.click();
+                });
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
