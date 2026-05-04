@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html lang="ar" translate="no">
+<html lang="ar" translate="no" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google" content="notranslate">
-    <title>التسوق الإلكتروني - استخراج</title>
+    <title>التسوق الإلكتروني - نشاط الاستخراج</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
+        /* الخط الأساسي للتطبيق */
+        @import url('https://fonts.googleapis.com/css2?family=Simplified+Arabic&display=swap');
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
@@ -16,14 +19,15 @@
             justify-content: center;
             align-items: flex-start;
             padding: 2vh 2vw; 
-            font-family: 'Calibri', 'Segoe UI', Tahoma, Arial, sans-serif; 
+            font-family: 'Simplified Arabic', 'Segoe UI', Tahoma, Arial, sans-serif; 
             direction: rtl;
         }
 
+        /* شاشة الترحيب */
         #welcome-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(243, 244, 246, 0.95);
+            background: rgba(243, 244, 246, 0.98);
             z-index: 9999;
             display: flex;
             justify-content: center;
@@ -41,171 +45,144 @@
             width: 90%;
         }
 
-        .input-group {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
         .input-group input {
-            padding: 10px;
-            font-size: 18px;
-            border: 2px solid #d1d5db;
-            border-radius: 8px;
-            width: 100%;
-            text-align: center;
+            padding: 10px; font-size: 18px; border: 2px solid #d1d5db;
+            border-radius: 8px; width: 100%; text-align: center; margin-bottom: 15px;
+            font-family: inherit;
         }
 
         .start-btn {
-            padding: 10px 40px;
-            font-size: 20px;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
+            padding: 10px 40px; font-size: 20px; background: #3b82f6;
+            color: white; border: none; border-radius: 8px; cursor: pointer; width: 100%;
+            font-family: inherit;
+            transition: 0.3s;
         }
 
+        .start-btn:hover { background: #2563eb; }
+
+        /* الحاوية الرئيسية للتطبيق */
         .app-container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            max-width: 1000px;
-            background: white;
-            border-radius: 12px; 
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            position: relative;
-            filter: blur(5px);
-            transition: filter 0.3s ease;
-            padding-bottom: 20px;
+            width: 100%; max-width: 1400px; background: white; border-radius: 12px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08); filter: blur(5px);
+            transition: filter 0.3s ease; display: flex; flex-direction: column;
+            overflow: hidden;
         }
 
+        /* الهيدر والعنوان */
         .header-section {
-            padding: 20px;
-            border-bottom: 2px solid #e5e7eb;
-            text-align: center;
-            position: relative;
-        }
-
-        .score-stamp {
-            display: none;
-            position: absolute;
-            top: 10px;
-            left: 20px;
-            color: #ef4444;
-            font-size: 20px;
-            font-weight: 900;
-            border: 4px dashed #ef4444;
-            padding: 10px;
-            transform: rotate(-10deg);
-            z-index: 10;
+            background-color: #87ceeb; /* أزرق سماوي */
+            padding: 25px; text-align: center; position: relative;
+            border-bottom: 4px solid #3b82f6; overflow: hidden;
         }
 
         .title {
-            color: #1f2937;
-            font-size: 28px; 
-            font-weight: 900;
-            border-bottom: 4px solid #eab308;
+            color: #ffffff; /* أبيض */
+            font-size: 40px; font-weight: 900; position: relative; z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
             margin-bottom: 10px;
         }
+
+        /* الإيموجيز المتحركة */
+        .emojis { position: absolute; top: 50%; transform: translateY(-50%); font-size: 32px; z-index: 1; }
+        .emojis.right { right: 10%; }
+        .emojis.left { left: 10%; }
+        .emoji { display: inline-block; animation: float 3s ease-in-out infinite; margin: 0 5px; }
+        .emoji:nth-child(even) { animation-delay: 1.5s; }
         
-        .instruction { 
-            font-size: 16px; 
-            color: #10b981; 
-            background: #d1fae5;
-            padding: 10px;
-            border-radius: 8px;
-            display: inline-block;
-            direction: ltr; /* لتعليمات الإنجليزية */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(10deg); }
         }
 
-        .text-area {
-            background-color: #fefce8; 
-            padding: 25px 30px; 
-            border-bottom: 2px solid #e5e7eb;
+        /* تقسيم الشاشة: 65% للنص و 35% للأسئلة */
+        .main-layout { display: flex; width: 100%; }
+        
+        /* منطقة النص القرائي (يمين - 65%) */
+        .text-area { 
+            flex: 0 0 65%; max-width: 65%; background-color: #fefce8; 
+            padding: 30px; border-left: 2px solid #e5e7eb; 
         }
-
-        .reading-text {
-            font-size: 24px; 
-            line-height: 2.2; 
-            color: #111827;
-            text-align: justify;
-            font-weight: bold; 
-        }
-
+        
+        .reading-text { font-size: 28px; line-height: 1.9; color: #111827; text-align: justify; font-weight: bold; }
+        
+        /* الكلمات */
         .word {
-            cursor: pointer; 
-            padding: 0 4px; 
-            border-radius: 4px; 
-            transition: 0.2s;
-            display: inline-block;
+            cursor: pointer; padding: 0 4px; border-radius: 6px; transition: 0.2s;
+            display: inline-block; position: relative;
+        }
+        .word:hover { background-color: rgba(59, 130, 246, 0.15); }
+        .word.active-word { background-color: #fde047; box-shadow: 0 0 0 2px #eab308; }
+
+        /* منطقة الأسئلة (يسار - 35%) */
+        .questions-wrapper { flex: 0 0 35%; max-width: 35%; display: flex; flex-direction: column; background: #ffffff; }
+        
+        .instruction-bar {
+            background: #d1fae5; color: #10b981; padding: 12px; text-align: center;
+            font-size: 16px; font-family: Arial, sans-serif; font-weight: bold; border-bottom: 1px solid #a7f3d0;
+        }
+
+        .questions-area { padding: 20px 25px; flex-grow: 1; overflow-y: auto; }
+
+        /* عنوان الاستخراج */
+        .extract-heading {
+            font-size: 24px;
+            font-weight: 900;
+            color: #1f2937;
+            margin-bottom: 20px;
+            text-align: right;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
         }
         
-        .word:hover { background-color: rgba(59, 130, 246, 0.1); }
-
-        .word.active-word {
-            background-color: #fde047;
-            box-shadow: 0 0 0 2px #eab308;
+        /* سطر السؤال والفراغات على خط واحد */
+        .q-row { 
+            font-size: 18px; /* تصغير الخط قليلا */
+            font-weight: bold; 
+            margin-bottom: 18px; 
+            display: flex; 
+            align-items: center; 
+            flex-wrap: nowrap; /* إجبار العناصر على البقاء في سطر واحد */
+            white-space: nowrap;
         }
-
-        .questions-area {
-            padding: 30px;
-        }
-
-        .q-row {
-            font-size: 19px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+        .q-label { margin-left: 8px; color: #374151; min-width: 130px; }
+        
+        .slots-container { display: flex; gap: 8px; flex-wrap: nowrap; }
 
         .slot {
-            display: inline-block;
-            min-width: 120px;
-            height: 35px;
-            border-bottom: 2px dashed #3b82f6;
-            background-color: #f9fafb;
-            cursor: pointer;
-            text-align: center;
-            color: #1d4ed8;
-            line-height: 35px;
-            padding: 0 10px;
-            font-size: 17px;
+            display: inline-block; min-width: 75px; height: 35px; border-bottom: 2px dashed #3b82f6;
+            background-color: #f9fafb; cursor: pointer; text-align: center; color: #1d4ed8;
+            line-height: 35px; padding: 0 5px; font-size: 18px; transition: 0.2s; border-radius: 4px 4px 0 0;
+        }
+        .slot:hover { background-color: #eff6ff; }
+        .slot.filled { border-bottom: 3px solid #10b981; background-color: #ecfdf5; color: #047857; }
+        .correct-answer-display { color: #ef4444; font-size: 15px; margin-right: 5px; font-weight: normal; }
+
+        .submit-quiz-btn {
+            padding: 12px 30px; background-color: #3b82f6; color: white; border: none;
+            border-radius: 8px; font-size: 20px; cursor: pointer; margin: 15px auto 25px auto;
+            font-weight: bold; display: block; transition: 0.3s; font-family: inherit;
+        }
+        .submit-quiz-btn:hover { background-color: #2563eb; transform: scale(1.02); }
+
+        .score-stamp {
+            display: none; position: absolute; top: 15px; right: 25px; color: #ef4444;
+            font-size: 22px; font-weight: 900; border: 4px dashed #ef4444; padding: 10px 20px;
+            transform: rotate(-10deg); z-index: 10; background: rgba(255,255,255,0.9); border-radius: 8px;
         }
 
-        .slot.filled {
-            border-bottom: 2px solid #10b981;
-            background-color: #ecfdf5;
+        /* التصميم المتجاوب للشاشات الأصغر */
+        @media (max-width: 992px) {
+            .main-layout { flex-direction: column; }
+            .text-area { flex: none; max-width: 100%; border-left: none; border-bottom: 2px solid #e5e7eb; }
+            .questions-wrapper { flex: none; max-width: 100%; }
         }
-
-        .correct-answer-display {
-            color: #ef4444;
-            font-size: 15px;
-            margin-right: 5px;
-            font-weight: normal;
-        }
-
-        .submit-btn {
-            padding: 12px 50px;
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 20px;
-            cursor: pointer;
-            display: block;
-            margin: 20px auto;
-        }
-
-        @media (max-width: 768px) {
-            .reading-text { font-size: 20px; }
-            .q-row { flex-direction: column; align-items: flex-start; }
+        
+        @media (max-width: 600px) {
+            .title { font-size: 28px; }
+            .emojis { display: none; } 
+            .reading-text { font-size: 24px; }
+            .q-row { flex-wrap: wrap; }
+            .q-label { width: 100%; margin-bottom: 5px; }
         }
     </style>
 </head>
@@ -213,11 +190,11 @@
 
     <div id="welcome-screen">
         <div class="welcome-box">
-            <h2>مرحباً بك في النشاط</h2>
+            <h2 style="font-family: Arial, sans-serif; color: #1f2937; margin-bottom: 20px;">Extraction Activity</h2>
             <div class="input-group">
-                <input type="text" id="student-name" placeholder="اكتب اسمك هنا...">
+                <input type="text" id="student-name" placeholder="Student Name">
             </div>
-            <button class="start-btn" onclick="startQuiz()">ابدأ النشاط</button>
+            <button class="start-btn" onclick="startActivity()">Start</button>
         </div>
     </div>
 
@@ -227,144 +204,209 @@
                 <div id="stamp-name"></div>
                 <div id="stamp-score" dir="ltr"></div>
             </div>
-            <h2 class="title">التسوق الإلكتروني</h2>
-            <br>
-            <p class="instruction">Instructions: Click on the word in the text to select it, then click on the gap below to move it.</p>
+            <div class="emojis right">
+                <span class="emoji">✨</span><span class="emoji">🛒</span><span class="emoji">💻</span>
+            </div>
+            <h1 class="title">التَّسَوُّقُ الْإِلِكْتْرُونِيُّ</h1>
+            <div class="emojis left">
+                <span class="emoji">📦</span><span class="emoji">💳</span><span class="emoji">✨</span>
+            </div>
         </header>
 
-        <main class="text-area">
-            <div id="text-container" class="reading-text">
+        <div class="main-layout">
+            <main class="text-area">
+                <div id="text-container" class="reading-text"></div>
+            </main>
+
+            <aside class="questions-wrapper">
+                <div class="instruction-bar" data-html2canvas-ignore="true">
+                    Instructions: Click on a word in the text to select it, then click on the empty line below.
                 </div>
-        </main>
+                
+                <section class="questions-area" id="questions-container">
+                    <div class="extract-heading">اسْتَخْرِجْ مِنَ النَّصِّ:</div>
+                    
+                    <div class="q-row" data-category="0">
+                        <span class="q-label">• فِعْلٌ مُضَارِعٌ:</span>
+                        <div class="slots-container">
+                            <span class="slot"></span> <span class="slot"></span> <span class="slot"></span>
+                        </div>
+                    </div>
+                    <div class="q-row" data-category="1">
+                        <span class="q-label">• فِعْلٌ مَاضٍ:</span>
+                        <div class="slots-container">
+                            <span class="slot"></span> <span class="slot"></span>
+                        </div>
+                    </div>
+                    <div class="q-row" data-category="2">
+                        <span class="q-label">• فِعْلٌ فِي الْمُسْتَقْبَلِ:</span>
+                        <div class="slots-container">
+                            <span class="slot"></span>
+                        </div>
+                    </div>
+                    <div class="q-row" data-category="3">
+                        <span class="q-label">• جَمْعُ مُؤَنَّثٍ سَالِمٌ:</span>
+                        <div class="slots-container">
+                            <span class="slot"></span> <span class="slot"></span>
+                        </div>
+                    </div>
+                    <div class="q-row" data-category="4">
+                        <span class="q-label">• تَفْضِيلٌ:</span>
+                        <div class="slots-container">
+                            <span class="slot"></span> <span class="slot"></span> <span class="slot"></span>
+                        </div>
+                    </div>
+                    <div class="q-row" data-category="5">
+                        <span class="q-label">• رَوَابِطُ:</span>
+                        <div class="slots-container">
+                            <span class="slot"></span> <span class="slot"></span> <span class="slot"></span>
+                        </div>
+                    </div>
+                    <div class="q-row" data-category="6">
+                        <span class="q-label">• مُرَادِفُ (خِلَالَ):</span>
+                        <div class="slots-container">
+                            <span class="slot"></span>
+                        </div>
+                    </div>
+                    <div class="q-row" data-category="7">
+                        <span class="q-label">• مُفْرَدُ (هَدَايَا):</span>
+                        <div class="slots-container">
+                            <span class="slot"></span>
+                        </div>
+                    </div>
+                    <div class="q-row" data-category="8">
+                        <span class="q-label">• ضِدُّ (بَطِيءٌ):</span>
+                        <div class="slots-container">
+                            <span class="slot"></span>
+                        </div>
+                    </div>
+                    <div class="q-row" data-category="9">
+                        <span class="q-label">• ضِدُّ (أَغْلَى):</span>
+                        <div class="slots-container">
+                            <span class="slot"></span>
+                        </div>
+                    </div>
+                    <div class="q-row" data-category="10">
+                        <span class="q-label">• جَمْعُ (الْمَحَلُّ):</span>
+                        <div class="slots-container">
+                            <span class="slot"></span>
+                        </div>
+                    </div>
+                </section>
 
-        <section class="questions-area" id="questions-container">
-            <div class="q-row" data-category="0">
-                <span>• فِعْلٌ مُضَارِعٌ:</span>
-                <span class="slot"></span> <span class="slot"></span>
-            </div>
-            <div class="q-row" data-category="1">
-                <span>• فِعْلٌ مَاضٍ:</span>
-                <span class="slot"></span>
-            </div>
-            <div class="q-row" data-category="2">
-                <span>• فِعْلٌ فِي الْمُسْتَقْبَلِ:</span>
-                <span class="slot"></span>
-            </div>
-            <div class="q-row" data-category="3">
-                <span>• جَمْعُ مُؤَنَّثٍ سَالِمٌ:</span>
-                <span class="slot"></span> <span class="slot"></span>
-            </div>
-            <div class="q-row" data-category="4">
-                <span>• تَفْضِيلٌ:</span>
-                <span class="slot"></span> <span class="slot"></span> <span class="slot"></span>
-            </div>
-            <div class="q-row" data-category="5">
-                <span>• رَوَابِطُ:</span>
-                <span class="slot"></span> <span class="slot"></span>
-            </div>
-            <div class="q-row" data-category="6">
-                <span>• مُرَادِفُ (خِلَالَ):</span>
-                <span class="slot"></span>
-            </div>
-            <div class="q-row" data-category="7">
-                <span>• مُفْرَدُ (هَدَايَا):</span>
-                <span class="slot"></span>
-            </div>
-            <div class="q-row" data-category="8">
-                <span>• ضِدُّ (بَطِيءٌ):</span>
-                <span class="slot"></span>
-            </div>
-            <div class="q-row" data-category="9">
-                <span>• ضِدُّ (أَغْلَى):</span>
-                <span class="slot"></span>
-            </div>
-            <div class="q-row" data-category="10">
-                <span>• جَمْعُ (الْمَحَلُّ):</span>
-                <span class="slot"></span>
-            </div>
-        </section>
-
-        <button class="submit-btn" id="submit-btn" onclick="submitQuiz()">تسليم الإجابات</button>
+                <button class="submit-quiz-btn" id="submit-btn" onclick="submitQuiz()">تَسْلِيمُ الْإِجَابَاتِ</button>
+            </aside>
+        </div>
     </div>
 
     <script>
         let studentName = "";
         
-        // النص المشكل وتحديد العبارات التي تعمل كوحدة واحدة
-        const rawText = `فِي الْوَاقِعِ نَحْنُ <span class="word">نَتَسَوَّقُ</span> <span class="word">عَبْرَ</span> الْإِنْتَرْنِتِ فِي الْوَقْتِ الْحَالِيِّ أَكْثَرَ مِنَ الْمَاضِي، <span class="word">وَالسَّبَبُ فِي ذَلِكَ</span> أَنَّ مُعْظَمَ النَّاسِ <span class="word">يُفَضِّلُونَ</span> التَّسَوُّقَ الْإِلِكْتْرُونِيَّ <span class="word">لِأَنَّهُ</span> <span class="word">أَمْتَعُ</span> وَ <span class="word">أَسْهَلُ</span> وَ <span class="word">أَرْخَصُ</span> مِنَ التَّسَوُّقِ الْمُبَاشِرِ مِنَ <span class="word">الْمَحِلَّاتِ</span> التِّجَارِيَّةِ، <span class="word">كَمَا أَنَّهُ</span> <span class="word">يُوَفِّرُ</span> الْوَقْتَ وَ الْجُهْدَ أَيْضاً. فِي الْأُسْبُوعِ الْمَاضِي <span class="word">اِشْتَرَيْتُ</span> حَقِيبَةَ يَدٍ <span class="word">هَدِيَّةً</span> لِأُمِّي فِي عِيدِ مِيلَادِهَا مِنْ مَوْقِعِ ترينديول وَ <span class="word">كَانَتْ</span> أَرْخَصَ مِنَ الْمَحَلِّ التِّجَارِيِّ بِمِائَتَيْ دِرْهَمٍ، <span class="word">كَمَا أَنَّ</span> جَوْدَتَهَا كَانَتْ عَالِيَةً، وَ كَانَ الشَّحْنُ وَ التَّوْصِيلُ <span class="word">سَرِيعاً</span>، <span class="word">لَكِنْ</span> لِلْأَسَفِ الدَّفْعُ كَانَ <span class="word">عَنْ طَرِيقِ</span> بِطَاقَةِ الِائْتِمَانِ. <span class="word">لِذَلِكَ</span>، الْمَرَّةَ الْقَادِمَةَ <span class="word">سَوْفَ أَتَسَوَّقُ</span> مِنْ مَوْقِعِ أَمَازُون حَيْثُ <span class="word">يُمْكِنُنِي</span> الدَّفْعُ عِنْدَ الِاسْتِلَامِ. وَ مِنْ خِلَالِ تَجْرِبَتِي، <span class="word">أَنْصَحُ</span> عِنْدَ التَّسَوُّقِ عَبْرَ الْإِنْتَرْنِتِ الشِّرَاءَ مِنْ مَوَاقِعَ مَشْهُورَةٍ وَ مَوْثُوقَةٍ حَتَّى لَا <span class="word">تَكُونَ</span> ضَحِيَّةَ <span class="word">عَمَلِيَّاتِ</span> تَحَايُلٍ وَ غِشٍّ أَوْ تَتَعَرَّضَ لِلْقَرْصَنَةِ.`;
+        // النص مجهز بدون الترجمة (تم حذف الجزء الإنجليزي لتنظيف الكود)
+        const textWords = [
+            "فِي", "الْوَاقِعِ", "نَحْنُ", "نَتَسَوَّقُ", "عَبْرَ", "الْإِنْتَرْنِتِ", 
+            "فِي", "الْوَقْتِ", "الْحَالِيِّ", "أَكْثَرَ", "مِنَ", "الْمَاضِي،", 
+            "وَالسَّبَبُ فِي ذَلِكَ", "أَنَّ", "مُعْظَمَ", "النَّاسِ", "يُفَضِّلُونَ", 
+            "التَّسَوُّقَ", "الْإِلِكْتْرُونِيَّ", "لِأَنَّهُ", "أَمْتَعُ", "وَ", 
+            "أَسْهَلُ", "وَ", "أَرْخَصُ", "مِنَ", "التَّسَوُّقِ", "الْمُبَاشِرِ", 
+            "مِنَ", "الْمَحِلَّاتِ", "التِّجَارِيَّةِ،", "كَمَا أَنَّهُ", "يُوَفِّرُ", 
+            "الْوَقْتَ", "وَ", "الْجُهْدَ", "أَيْضاً.", "فِي", "الْأُسْبُوعِ", 
+            "الْمَاضِي", "اِشْتَرَيْتُ", "حَقِيبَةَ", "يَدٍ", "هَدِيَّةً", "لِأُمِّي", 
+            "فِي", "عِيدِ", "مِيلَادِهَا", "مِنْ", "مَوْقِعِ", "ترينديول", "وَ", 
+            "كَانَتْ", "أَرْخَصَ", "مِنَ", "الْمَحَلِّ", "التِّجَارِيِّ", "بِمِائَتَيْ", 
+            "دِرْهَمٍ،", "كَمَا أَنَّ", "جَوْدَتَهَا", "كَانَتْ", "عَالِيَةً،", "وَ", 
+            "كَانَ", "الشَّحْنُ", "وَ", "التَّوْصِيلُ", "سَرِيعاً،", "لَكِنْ", 
+            "لِلْأَسَفِ", "الدَّفْعُ", "كَانَ", "عَنْ طَرِيقِ", "بِطَاقَةِ", 
+            "الِائْتِمَانِ.", "لِذَلِكَ،", "الْمَرَّةَ", "الْقَادِمَةَ", "سَوْفَ أَتَسَوَّقُ", 
+            "مِنْ", "مَوْقِعِ", "أَمَازُون", "حَيْثُ", "يُمْكِنُنِي", "الدَّفْعُ", 
+            "عِنْدَ", "الِاسْتِلَامِ.", "وَ", "مِنْ خِلَالِ", "تَجْرِبَتِي،", "أَنْصَحُ", 
+            "عِنْدَ", "التَّسَوُّقِ", "عَبْرَ", "الْإِنْتَرْنِتِ", "الشِّرَاءَ", "مِنْ", 
+            "مَوَاقِعَ", "مَشْهُورَةٍ", "وَ", "مَوْثُوقَةٍ", "حَتَّى لَا", "تَكُونَ", 
+            "ضَحِيَّةَ", "عَمَلِيَّاتِ", "تَحَايُلٍ", "وَ", "غِشٍّ", "أَوْ", "تَتَعَرَّضَ", "لِلْقَرْصَنَةِ."
+        ];
 
-        // قاعدة البيانات للإجابات (بدون تشكيل للمطابقة المرنة)
+        // قاعدة البيانات 
         const quizData = {
-            0: ['نتسوق', 'يفضلون', 'يوفر', 'يمكنني', 'انصح', 'تكون'], // مضارع
-            1: ['اشتريت', 'كانت'], // ماض
-            2: ['سوف اتسوق'], // مستقبل
-            3: ['المحلات', 'عمليات'], // مؤنث سالم
-            4: ['ارخص', 'امتع', 'اسهل'], // تفضيل
-            5: ['والسبب في ذلك', 'لذلك', 'لانه', 'كما انه', 'لكن', 'كما ان'], // روابط
-            6: ['عن طريق'], // مرادف خلال
-            7: ['هدية'], // مفرد هدايا
-            8: [سَرِيعاً'], // ضد بطيء
-            9: ['ارخص'], // ضد أغلى
-            10: ['المحلات'] // جمع المحل
+            0: ['نتسوق', 'يفضلون', 'يوفر', 'يمكنني', 'انصح', 'تكون'], 
+            1: ['اشتريت', 'كانت'], 
+            2: ['سوف اتسوق'], 
+            3: ['المحلات', 'عمليات'], 
+            4: ['ارخص', 'امتع', 'اسهل'], 
+            5: ['والسبب في ذلك', 'لذلك', 'لانه', 'كما انه', 'لكن', 'كما ان', 'حتى لا'], 
+            6: ['عبر', 'عن طريق', 'من خلال'], 
+            7: ['هدية'], 
+            8: ['سريعا'], 
+            9: ['ارخص'], 
+            10: ['المحلات']
         };
-
-        function normalize(text) {
-            return text.replace(/[\u064B-\u065F]/g, "").replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").trim();
-        }
-
-        function startQuiz() {
-            studentName = document.getElementById('student-name').value.trim();
-            if (!studentName) return alert("الرجاء إدخال اسمك.");
-            document.getElementById('welcome-screen').style.display = 'none';
-            document.getElementById('capture-area').style.filter = 'none';
-        }
-
-        // بناء النص
-        document.getElementById('text-container').innerHTML = rawText;
 
         let selectedWord = null;
         let selectedElem = null;
 
-        document.querySelectorAll('.word').forEach(w => {
-            w.onclick = function() {
-                if(selectedElem) selectedElem.classList.remove('active-word');
-                selectedWord = this.innerText;
-                selectedElem = this;
-                this.classList.add('active-word');
-            }
-        });
+        function normalize(text) {
+            return text.replace(/[\u064B-\u065F]/g, "").replace(/[أإآ]/g, "ا").replace(/ة/g, "ه")
+                       .replace(/[.,،؛:]/g, "").trim();
+        }
 
-        document.querySelectorAll('.slot').forEach(s => {
-            s.onclick = function() {
-                if(selectedWord) {
-                    this.innerText = selectedWord;
-                    this.classList.add('filled');
-                    selectedElem.classList.remove('active-word');
-                    selectedWord = null; selectedElem = null;
-                } else if(this.innerText) {
-                    this.innerText = "";
-                    this.classList.remove('filled');
+        function startActivity() {
+            studentName = document.getElementById('student-name').value.trim();
+            if (!studentName) return alert("Please enter your name.");
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('capture-area').style.filter = 'none';
+            buildText();
+        }
+
+        function buildText() {
+            const container = document.getElementById('text-container');
+            container.innerHTML = textWords.map((word, index) => 
+                `<span class="word" id="word-${index}">${word}</span>`
+            ).join(' ');
+
+            // التحديد عند النقر 
+            document.querySelectorAll('.word').forEach(w => {
+                w.onclick = function() {
+                    if(selectedElem) selectedElem.classList.remove('active-word');
+                    selectedWord = this.innerText.replace(/[.,،؛:]/g, ""); // إزالة الفواصل عند السحب
+                    selectedElem = this;
+                    this.classList.add('active-word');
                 }
-            }
-        });
+            });
+
+            // وضع الكلمة في الفراغ
+            document.querySelectorAll('.slot').forEach(s => {
+                s.onclick = function() {
+                    if(selectedWord) {
+                        this.innerText = selectedWord;
+                        this.classList.add('filled');
+                        selectedElem.classList.remove('active-word');
+                        selectedWord = null; selectedElem = null;
+                    } else if(this.innerText) {
+                        this.innerText = "";
+                        this.classList.remove('filled');
+                    }
+                }
+            });
+        }
 
         function submitQuiz() {
-            let totalScore = 0;
+            let totalCorrectAnswers = 0;
+            let totalRequiredAnswers = 0;
             const rows = document.querySelectorAll('.q-row');
 
             rows.forEach(row => {
                 const cat = row.getAttribute('data-category');
                 const slots = row.querySelectorAll('.slot');
                 const correctList = quizData[cat];
-                let rowHasCorrect = false;
 
                 slots.forEach(slot => {
+                    totalRequiredAnswers++;
                     let val = normalize(slot.innerText);
+                    
                     if (val && correctList.some(c => normalize(c) === val)) {
-                        rowHasCorrect = true;
-                        slot.style.color = "#047857"; // أخضر للإجابة الصحيحة
+                        slot.style.color = "#047857";
+                        slot.style.borderColor = "#047857";
+                        totalCorrectAnswers++;
                     } else {
-                        // إظهار الإجابة الصحيحة باللون الأحمر في حال الخطأ أو الفراغ
                         const feedback = document.createElement('span');
                         feedback.className = 'correct-answer-display';
                         feedback.innerText = `(${correctList[0]})`;
@@ -373,22 +415,20 @@
                     }
                     slot.style.pointerEvents = 'none';
                 });
-
-                if (rowHasCorrect) totalScore++;
             });
 
-            // الختم
+            // إظهار الختم
             const stamp = document.getElementById('score-stamp');
             document.getElementById('stamp-name').innerText = studentName;
-            document.getElementById('stamp-score').innerText = `${totalScore} / ${rows.length}`;
+            document.getElementById('stamp-score').innerText = `${totalCorrectAnswers} / ${totalRequiredAnswers}`;
             stamp.style.display = 'block';
             document.getElementById('submit-btn').style.display = 'none';
 
-            // تصوير الشاشة تلقائياً
+            // تصوير الشاشة
             setTimeout(() => {
                 html2canvas(document.getElementById('capture-area'), { scale: 2 }).then(canvas => {
                     let link = document.createElement('a');
-                    link.download = `${studentName}_Result.png`;
+                    link.download = `${studentName}_Quiz_Result.png`;
                     link.href = canvas.toDataURL();
                     link.click();
                 });
